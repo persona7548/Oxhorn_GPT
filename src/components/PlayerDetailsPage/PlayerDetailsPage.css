@@ -1,0 +1,51 @@
+/* PlayerDetailsPage.css */
+
+.player-details-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  .player-details {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .player-name {
+    margin-top: 0;
+    color: #333;
+    font-size: 2rem;
+  }
+  
+  .player-grade, .player-rank-info p, .loading {
+    color: #666;
+    font-size: 1rem;
+    margin: 10px 0;
+  }
+  
+  .player-rank-info {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+  
+  .player-records {
+    margin-top: 20px;
+    background-color: #fafafa;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .player-records h3 {
+    font-size: 1.2rem;
+    margin-top: 0;
+  }
+  
+  .player-records p {
+    margin: 5px 0;
+  }

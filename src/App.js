@@ -1,24 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes  } from 'react-router-dom';
+import SearchPage from './components/SearchPage/SearchPage';
+import PlayerDetailsPage from './components/PlayerDetailsPage/PlayerDetailsPage'; // 상세 페이지 컴포넌트를 import 합니다.
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<SearchPage />} />
+        <Route path="/player/:playerId" element={<PlayerDetailsPage />} /> {/* 플레이어 상세 페이지 라우트 */}
+      </Routes>
+    </Router>
   );
 }
 
