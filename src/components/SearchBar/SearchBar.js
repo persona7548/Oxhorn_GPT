@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-function SearchBar({ onSearch }) {
+function SearchBar({ onSearch, onClick }) {
   const [nickname, setNickname] = useState('');
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -9,16 +10,17 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="input-group"> 
+    <div onClick={onClick} className="input-group">
       <input
         type="text"
+        className="form-control"
         value={nickname}
         onChange={(e) => setNickname(e.target.value)}
         placeholder="유저명 검색..."
       />
-      <button type="submit">검색</button>
-    </form>
+      <button className="btn btn-outline-secondary" type="submit">검색</button>
+    </div> </form>
   );
 }
-
 export default SearchBar;

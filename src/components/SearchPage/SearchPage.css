@@ -20,4 +20,55 @@
   .recent-search {
     margin: 10px 0;
   }
+  /* SearchPage.css */
+  .container {
+    max-width: 600px; /* 컨테이너 최대 폭 조정 */
+  }
   
+  /* 검색 창 컨테이너 */
+  .search-container {
+    margin-top: 2rem;
+    position: relative; /* 최근 검색 기록을 포함하기 위해 */
+  }
+  
+  /* 검색 입력창 스타일링 */
+  .search-input {
+    margin-bottom: .5rem;
+  }
+  .recent-search-term {
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .recent-search-term:hover {
+    background-color: #f8f9fa;
+    border-radius: .25rem;
+    padding: .25rem .5rem;
+  }
+  
+  .delete-button {
+    padding: 0 .5rem;
+    line-height: 1;
+    vertical-align: middle;
+  }
+  
+  .search-container {
+    margin-top: 20px;
+  }
+  
+  /* 추가: 검색 바와 최근 검색 기록의 스타일링 */
+  .search-bar {
+    margin-bottom: .5rem;
+  }
+  
+  .recent-searches-container {
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: .25rem;
+    box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
+    max-height: 300px;
+    overflow-y: auto;
+  }
