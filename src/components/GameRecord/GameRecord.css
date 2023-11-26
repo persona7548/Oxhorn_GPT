@@ -96,3 +96,16 @@
         width: calc(100% - 20px); /* 1 column layout on small devices */
     }
 }
+.team {
+    margin-bottom: 20px;
+}
+
+.team.win .player-details {
+    background-color: #eaffea; /* Light green background for winners */
+    border-color: #28a745; /* Bootstrap's .border-success color */
+}
+
+.team.lose .player-details {
+    background-color: #ffecec; /* Light red background for losers */
+    border-color: #dc3545; /* Bootstrap's .border-danger color */
+}
