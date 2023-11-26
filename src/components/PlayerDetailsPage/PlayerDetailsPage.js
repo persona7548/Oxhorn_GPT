@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './PlayerDetailsPage.css';
 import axios from 'axios';
-import { Pie } from 'react-chartjs-2';
+import { Pie,Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto'; // Chart.js 자동 등록
 import NavBar from '../NavBar'; // NavBar 컴포넌트를 import합니다.
+import GameRecord from '../GameRecord/GameRecord'; // GameRecord 컴포넌트를 가져옵니다.
+
 function PlayerDetailsPage() {
   const { playerId } = useParams();
   const [playerDetails, setPlayerDetails] = useState(null);
@@ -19,6 +21,11 @@ function PlayerDetailsPage() {
   const [detailedMatchInfo, setDetailedMatchInfo] = useState({});
   const apiKey = process.env.REACT_APP_API_KEY; // 환경 변수에서 API 키를 가져옵니다.
 
+  const [allGameData, setAllGameData] = useState({
+    wins: 0,
+    losses: 0,
+    // 필요한 다른 데이터...
+  });
   
   const fetchMatchDetail = async (matchId) => {
     try {
@@ -31,6 +38,19 @@ function PlayerDetailsPage() {
       console.error('Error fetching match detail:', error);
     }
   };
+  // 캐릭터 이미지를 보여주는 컴포넌트
+  const CharacterImage = ({ characterId }) => (
+    <img src={`https://img-api.neople.co.kr/cy/characters/${characterId}?zoom=1`} alt="Character" />
+  );
+
+  // 아이템 이미지를 보여주는 컴포넌트
+  const ItemImage = ({ itemId }) => (
+    <img src={`https://img-api.neople.co.kr/cy/items/${itemId}`} alt="Item" />
+  );
+  // 특성 이미지를 보여주는 컴포넌트
+  const AttriImage = ({ attributeId }) => (
+    <img src={`https://img-api.neople.co.kr/cy/position-attributes/${attributeId}`} alt="Attribute" />
+  );
 
   // 상세 보기 버튼 클릭 핸들러
 const handleDetailClick = (matchId) => {
@@ -39,7 +59,7 @@ const handleDetailClick = (matchId) => {
   } else {
     setDetailedMatchInfo(prevState => ({
       ...prevState,
-      [matchId]: undefined // 상세 정보 숨기기
+      [matchId]: '' // 상세 정보 숨기기
     }));
   }
 };
@@ -59,23 +79,7 @@ const handleDetailClick = (matchId) => {
       fetchMatches('normal', nextNormal);
     }
   };
-  const MatchDetail = ({ detail }) => {
-    return (
-      <div className="match-detail">
-        <p>날짜: {detail.date}</p>
-        <p>맵 이름: {detail.map.name}</p>
-        {detail.teams.map((team) => (
-          <div key={team.result}>
-            <h3>{team.result === 'win' ? '승리 팀' : '패배 팀'}</h3>
-            {team.players.map((playerId) => {
-              const playerDetail = detail.players.find((p) => p.playerId === playerId);
-              return playerDetail ? <PlayerItemsAndAttributes key={playerId} player={playerDetail} /> : null;
-            })}
-          </div>
-        ))}
-      </div>
-    );
-  };
+
   const fetchMatches = async (gameTypeId,  nextToken = null, limit = 30) => {
 
     let url = `/cy/players/${playerId}/matches?gameTypeId=${gameTypeId}&limit=${limit}&apikey=${apiKey}`;
@@ -129,6 +133,16 @@ const handleDetailClick = (matchId) => {
     startDate.setDate(currentDate.getDate() - 90);
     const apiKey = process.env.REACT_APP_API_KEY;
 
+    if (ratingMatches.length > 0 && normalMatches.length > 0) {
+      const allGames = [...ratingMatches, ...normalMatches];
+      const wins = allGames.reduce((acc, match) => acc + (match.playInfo.result === 'win' ? 1 : 0), 0);
+      const losses = allGames.reduce((acc, match) => acc + (match.playInfo.result === 'lose' ? 1 : 0), 0);
+      setAllGameData({
+        wins,
+        losses,
+        // 계산된 다른 데이터...
+      });}
+    setSelectedTab('all');
     const fetchPlayerDetails = async () => {
       const url = `/cy/players/${playerId}?apikey=${apiKey}`;
 
@@ -149,25 +163,7 @@ const handleDetailClick = (matchId) => {
       setMatches(combinedMatches);
     }
   }, [loading, ratingMatches, normalMatches]);
-  const PlayerItemsAndAttributes = ({ player }) => {
-    return (
-      <div>
-        <h4>{player.nickname}</h4>
-        <p>특성:</p>
-        <ul>
-          {player.position.attribute.map((attr) => (
-            <li key={attr.id}>{attr.name} (Lv. {attr.level})</li>
-          ))}
-        </ul>
-        <p>아이템:</p>
-        <ul>
-          {player.items.map((item) => (
-            <li key={item.itemId}>{item.itemName}</li>
-          ))}
-        </ul>
-      </div>
-    );
-  };
+
   // 레코드 정보를 포맷팅하는 함수
   const formatRecords = (records) => {
     return records.map((record) => (
@@ -176,44 +172,67 @@ const handleDetailClick = (matchId) => {
         <p>승리: {record.winCount}</p>
         <p>패배: {record.loseCount}</p>
         <p>중단: {record.stopCount}</p>
+        <br/>
       </div>
     ));
   };
+
+  <div className="tab-buttons-container">
+  <button onClick={() => setSelectedTab('all')} className={`tab-button ${selectedTab === 'all' ? 'active' : ''}`}>모두 보기</button>
+  <button onClick={() => setSelectedTab('rating')} className={`tab-button ${selectedTab === 'rating' ? 'active' : ''}`}>공식전</button>
+  <button onClick={() => setSelectedTab('normal')} className={`tab-button ${selectedTab === 'normal' ? 'active' : ''}`}>일반전</button>
+  </div>
     // 파이 차트 데이터 및 옵션 설정
     const pieChartData = (record) => {
+      const totalGames = record.winCount + record.loseCount + record.stopCount;
+      const winRate = totalGames ? ((record.winCount / totalGames) * 100).toFixed(2) : 0;
       return {
         labels: ['승리', '패배', '중단'],
         datasets: [
           {
-            data: [record.winCount, record.loseCount, record.stopCount], // 각 데이터 항목
+            data: [record.winCount, record.loseCount, record.stopCount],
             backgroundColor: ['#4caf50', '#f44336', '#ffeb3b'],
             hoverBackgroundColor: ['#66bb6a', '#ef5350', '#fdd835'],
           },
         ],
+        text: winRate + '%', // Add win rate text
       };
     };
 
+    const renderMatchDetail = (matchId) => {
+      const matchInfo = detailedMatchInfo[matchId];
+    
+      // detailedMatchInfo 상태에 정보가 있으면 GameRecord 컴포넌트로 렌더링
+      if (matchInfo) {
+        return (
+          <GameRecord match={matchInfo} />
+        );
+      }
+      return null;
+    };
     const renderMatch = (match) => {
       const backgroundColor = match.playInfo.result === 'win' ? '#ADD8E6' : '#FFC0CB'; // 하늘색 또는 붉은색
       const gameTypeText = match.gameTypeId === 'rating' ? '공식전' : '일반전';
-
+      
       return (
-        <div key={match.matchId} className="match-record" style={{ backgroundColor }}>
+        <div key={match.matchId} className="match-record" style={{ backgroundColor, marginBottom: '10px' }}>
           <div key={match.matchId} style={{ backgroundColor }}>
             <p>경기 종류: {gameTypeText}</p>
             <p>시작 시간: {match.date}</p>
             <p>지속 시간: {Math.round(match.playInfo.playTime / 60)}분</p>
             <p>맵: {match.map.name}</p>
-            <p>캐릭터: {match.playInfo.characterName}</p>
+            <p><CharacterImage characterId={match.playInfo.characterId} /> 캐릭터: {match.playInfo.characterName}</p>
             <p>K/D/A: {match.playInfo.killCount}/{match.playInfo.deathCount}/{match.playInfo.assistCount}</p>
             <p>딜량: {match.playInfo.attackPoint}</p>
             <p>받은 피해량: {match.playInfo.damagePoint}</p>
-            {/* 아이템 및 특성 정보를 여기에 표시 */}
+            
+            {/* 상세 정보 토글 버튼 */}
             <button onClick={() => handleDetailClick(match.matchId)}>상세 보기</button>
-            {detailedMatchInfo[match.matchId] && <MatchDetail detail={detailedMatchInfo[match.matchId]} />}
-         
-
-          </div> </div>
+    
+            {/* 상세 정보 렌더링 조건부 표시 */}
+            {renderMatchDetail(match.matchId)}
+          </div>
+        </div>
       );
     };
   return (
@@ -222,37 +241,62 @@ const handleDetailClick = (matchId) => {
       <NavBar />
   
       {/* 플레이어 전적 정보 */}
-      <div className="player-details-container">
+      <div className="container">
+      <div className="row">
+      <div  className="player-details-container">
         {playerDetails ? (
-          <div className="player-details">
+          <div class="col-12 col-md-12">
             <h1 className="player-name">{playerDetails.nickname}</h1>
             <p className="player-grade">등급: {playerDetails.grade}</p>
             {playerDetails.tierTest && (
               <div className="player-rank-info">
                 <p>클랜: {playerDetails.clanName}</p>
                 <p>랭크: {playerDetails.tierName}</p>
-                <p>레이팅 포인트: {playerDetails.ratingPoint}</p>
-                <p>최대 레이팅 포인트: {playerDetails.maxRatingPoint}</p>
+                <p>레이팅 포인트: {playerDetails.ratingPoint} (최대: {playerDetails.maxRatingPoint})</p>
               </div>
             )}
             <div className="player-records">
               {formatRecords(playerDetails.records)}
             </div>
-            <div>
-              {playerDetails.records.map((record, index) => (
-                <div key={index}>
-                  <h3>{record.gameTypeId === 'rating' ? '랭크 게임' : '일반 게임'}</h3>
-                  <Pie data={pieChartData(record)} options={{ responsive: true }} />
+            <div className="container">
+            <div className="tab-buttons-container">
+            <button onClick={() => setSelectedTab('all')} className={`tab-button ${selectedTab === 'all' ? 'active' : ''}`}>모두 보기</button>
+            <button onClick={() => setSelectedTab('rating')} className={`tab-button ${selectedTab === 'rating' ? 'active' : ''}`}>공식전</button>
+            <button onClick={() => setSelectedTab('normal')} className={`tab-button ${selectedTab === 'normal' ? 'active' : ''}`}>일반전</button>
+          </div>                  
+
+            <div class="col-12 col-md-12">
+            <div className="chart-container">
+                {selectedTab === 'all' && (
+                  <Doughnut
+                    data={{
+                      labels: ['승리', '패배'],
+                      datasets: [
+                        {
+                          data: [allGameData.wins, allGameData.losses],
+                          backgroundColor: ['#4caf50', '#f44336'],
+                          hoverBackgroundColor: ['#66bb6a', '#ef5350'],
+                        },
+                      ],
+                    }}
+                    options={{
+                      cutoutPercentage: 70,
+                      responsive: true,
+                      tooltips: { enabled: false },
+                      elements: {
+                        center: {
+                          text: ((allGameData.wins / (allGameData.wins + allGameData.losses)) * 100).toFixed(2) + '%', // 승률 표시
+                          fontStyle: 'bold',
+                        },
+                      },
+                    }}
+                  />
+                )}
+              </div>
             </div>
-              ))}
             </div>
-            <div className="player-details-container">
-        {/* 탭 버튼 */}
-        <div>
-          <button onClick={() => setSelectedTab('all')}>모두 보기</button>
-          <button onClick={() => setSelectedTab('rating')}>공식전</button>
-          <button onClick={() => setSelectedTab('normal')}>일반전</button>
-        </div>
+            <div class="col-12 col-md-8">
+
         {/* 매치 리스트 */}
         <div className="matches-container">
           {matches
@@ -271,6 +315,7 @@ const handleDetailClick = (matchId) => {
         )}
       </div>
     </div>
+    </div></div>
   );
 }
 

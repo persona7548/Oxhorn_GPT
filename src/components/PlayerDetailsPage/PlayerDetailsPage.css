@@ -1,5 +1,6 @@
 /* PlayerDetailsPage.css */
 
+
 .player-details-container {
     display: flex;
     justify-content: center;
@@ -9,6 +10,7 @@
   }
   
   .player-details {
+    
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 20px;
@@ -49,3 +51,80 @@
   .player-records p {
     margin: 5px 0;
   }
+
+  /* 모바일 기기를 위한 기본 스타일 */
+.match-record, .player-details, .matches-container {
+  padding: 10px;
+}
+
+/* 태블릿을 위한 스타일 */
+@media (min-width: 768px) {
+  .match-record, .player-details, .matches-container {
+    padding: 20px;
+  }
+}
+
+/* 데스크탑을 위한 스타일 */
+@media (min-width: 1024px) {
+  .match-record, .player-details, .matches-container {
+    padding: 30px;
+  }
+}
+/* 차트 컨테이너 스타일 */
+.chart-container {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+/* 개별 차트 스타일 */
+.chart {
+  position: relative;
+  width: 200px; /* 차트 크기 조절 */
+}
+
+/* 중앙 승률 텍스트 스타일 */
+.chart-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px; /* 텍스트 크기 조절 */
+  font-weight: bold;
+}
+
+/* 탭 버튼 컨테이너 스타일 */
+.tab-buttons-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* 각 탭 버튼 스타일 */
+.tab-button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  background-color: #f7f7f7;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* 활성화된 탭 버튼 스타일 */
+.tab-button.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* 반응형 웹 디자인을 위한 미디어 쿼리 */
+@media (max-width: 768px) {
+  .chart-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chart {
+    margin-bottom: 20px;
+  }
+}

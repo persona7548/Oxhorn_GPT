@@ -1,0 +1,98 @@
+/* GameRecord.css */
+.game-record {
+    background-color: #f5f5f5; /* 배경색 설정 */
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.game-record-header {
+    margin-bottom: 20px;
+}
+
+.game-date, .game-type, .game-map {
+    font-weight: bold;
+}
+
+.team-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.team-stats-win .team-result,
+.team-stats-lose .team-result {
+    font-weight: bold;
+}
+
+.team-stats-win .team-kda {
+    color: #28a745; /* Bootstrap's .text-success color */
+}
+
+.team-stats-lose .team-kda {
+    color: #dc3545; /* Bootstrap's .text-danger color */
+}
+
+.player-details-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.player-details {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 10px;
+    padding: 15px;
+    width: calc(33.333% - 20px); /* 3 columns layout with margin */
+    box-shadow: 0 2px 4px rgba(0,0,0,.1); /* Simple box shadow for depth */
+}
+
+.player-character-image {
+    width: 100px; /* Set a fixed width for character images */
+    height: 100px; /* Set a fixed height for character images */
+    object-fit: cover; /* Ensure the image covers the area without stretching */
+    border-radius: 50%; /* Make image round */
+    margin-right: 10px;
+}
+
+.player-info {
+    margin-bottom: 10px;
+}
+
+.player-info span {
+    display: block; /* Make each player info item take a full line */
+    margin-bottom: 5px;
+}
+
+.player-attributes img,
+.player-items img {
+    width: 30px; /* Set a fixed width for attribute and item images */
+    height: 30px; /* Set a fixed height for attribute and item images */
+    object-fit: cover;
+    margin-right: 5px;
+    border-radius: 4px; /* Slight rounding of corners for aesthetics */
+}
+
+.player-attributes {
+    margin-bottom: 10px;
+}
+
+.player-items {
+    display: flex; /* Display item images in a row */
+    align-items: center; /* Center items vertically */
+    flex-wrap: wrap; /* Allow items to wrap to next line */
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .player-details {
+        width: calc(50% - 20px); /* 2 columns layout on medium devices */
+    }
+}
+
+@media (max-width: 767px) {
+    .player-details {
+        width: calc(100% - 20px); /* 1 column layout on small devices */
+    }
+}
